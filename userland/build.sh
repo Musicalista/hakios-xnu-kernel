@@ -136,7 +136,7 @@ SILEO_BIN="chmod cp mkdir mv rm"
 INJECT=${INJECT-"/redwood/lib/libhakios.dylib backboardd containermanagerd containermanagerd_system
 /redwood/lib/libhakios.sb.dylib SpringBoard
 /redwood/lib/libhakios.media.dylib mediaserverd
-/redwood/lib/libhakios.app.dylib Sileo
+/redwood/lib/libhakios.app.dylib Sileo TrollStore
 /redwood/lib/libhakios.tweaks.dylib Preferences"}
 mkdir -p obj
 
@@ -549,7 +549,7 @@ mkdir -p root/empty root/xpc root/hal
 for f in extensions.plist extensions.plist.sig; do
 	[ -f $DARWIN/rootfs/System/Library/xpc/$f ] && cp $DARWIN/rootfs/System/Library/xpc/$f root/xpc/
 done
-[ -d root/lib/HakiosAudio.driver ] && ln -s /redwood/lib/HakiosAudio.driver root/hal/HakiosAudio.driver
+[ -d root/lib/HakiosAudio.driver ] && { ln -s /redwood/lib/HakiosAudio.driver root/hal/HakiosAudio.driver 2>/dev/null || true; }
 # Programs and libraries of more than 4 MB (Turnip, UniXNU's Metal on Vulkan: TURNIP=1, M2V=1) live in the system
 # image, in /usr/local/redwood, with a link in their place here: the small image is loaded with the kernel, in the
 # 64 MB the loader takes for both (with them it grew from 6.6 to 26 MB).
@@ -659,7 +659,8 @@ if [ -f $DARWIN/system.manifest ] && [ -f $CACHE/dyld_shared_cache_arm64 ] &&
 	# launchd must load our choice of jobs, not all 500 that Darwin has
 	rm -rf sysroot/System/Library/LaunchDaemons sysroot/System/Library/NanoLaunchDaemons \
 		sysroot/System/Library/LaunchAngels sysroot/System/Library/xpc/launchd.plist
-	ln -s /redwood/LaunchDaemons sysroot/System/Library/LaunchDaemons
+	{ ln -s /redwood/LaunchDaemons sysroot/System/Library/LaunchDaemons 2>/dev/null || true; }
+	sed -i 's|^40755\t0\t0\tSystem/Library/LaunchDaemons$|120755\t0\t0\tSystem/Library/LaunchDaemons\t/redwood/LaunchDaemons|' $DARWIN/system.manifest
 	mkdir -p sysroot/redwood sysroot/sbin
 	# where the kernel mounts the Darwin root container off the phone's flash (boot-arg apfs_volume=):
 	# Darwin has no /System/Volumes, and nothing can make a directory in this image once it is built
@@ -724,12 +725,12 @@ if [ -f $DARWIN/system.manifest ] && [ -f $CACHE/dyld_shared_cache_arm64 ] &&
 	fi
 	# our audio device, where the audio server looks for such plug-ins (and for no others: Apple's are left out)
 	mkdir -p sysroot/System/Library/Audio/Plug-Ins/HAL
-	ln -s /redwood/lib/HakiosAudio.driver sysroot/System/Library/Audio/Plug-Ins/HAL/HakiosAudio.driver
+	ln -s /redwood/lib/HakiosAudio.driver sysroot/System/Library/Audio/Plug-Ins/HAL/HakiosAudio.driver 2>/dev/null || true
 	# the plug-in Metal opens when the accelerator names it (boot-arg metal=1; without it nothing names this bundle)
 	rm -rf sysroot/usr/local/redwood
 	[ -d big ] && mkdir -p sysroot/usr/local && cp -a big sysroot/usr/local/redwood
 	mkdir -p sysroot/System/Library/Extensions
-	[ -d root/lib/HakiosMetal.bundle ] && ln -sfn /redwood/lib/HakiosMetal.bundle sysroot/System/Library/Extensions/HakiosMetal.bundle
+	[ -d root/lib/HakiosMetal.bundle ] && { ln -sfn /redwood/lib/HakiosMetal.bundle sysroot/System/Library/Extensions/HakiosMetal.bundle 2>/dev/null || true; }
 	# the OS cryptex: on a device a separate volume grafted at /System/Cryptexes/OS. It holds the dyld
 	# shared cache (dyld looks there first) and a few libraries and resources outside the cache.
 	mkdir -p sysroot/System/Cryptexes
@@ -742,7 +743,7 @@ if [ -f $DARWIN/system.manifest ] && [ -f $CACHE/dyld_shared_cache_arm64 ] &&
 	for f in $CACHE/dyld_shared_cache_arm64*; do
 		case "$f" in *.symbols) continue ;; esac     # symbolication data, never mapped
 		# -f: a cryptex fetched with the cache already in it would otherwise stop the build
-		ln -f "$f" $D/
+		ln -f "$f" "$D/" 2>/dev/null || cp -f "$f" "$D/"
 	done
 	# zlib where it saves room, as Apple keeps the root (a small file whole in its attribute): 5.4 GB of
 	# files in 2.5 GB, what fits into the phone's RAM beside Darwin

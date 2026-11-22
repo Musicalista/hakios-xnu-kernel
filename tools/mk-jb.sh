@@ -67,6 +67,29 @@ mkdir -p "$TMP/control" && tar -C "$TMP/control" -xf "$TMP"/control.tar.* 2>/dev
 	echo
 } >> "$OUT/root/var/jb/Library/dpkg/status"
 
+# TrollStore: Permanent unsigned IPA installer & CoreTrust manager (opa334)
+TS_VER="2.1.1"
+TS_TAR="TrollStore.tar"
+TS_HELPER="com.opa334.trollstorehelper_${TS_VER}_iphoneos-arm64.deb"
+TS_BASE="https://github.com/opa334/TrollStore/releases/download/$TS_VER"
+get "$TS_BASE/$TS_TAR" "$TS_TAR"
+get "$TS_BASE/$TS_HELPER" "$TS_HELPER"
+
+mkdir -p "$OUT/root/var/jb/Applications"
+tar -C "$OUT/root/var/jb/Applications" -xf "$OUT/debs/$TS_TAR"
+[ -d "$OUT/root/var/jb/Applications/TrollStore.app" ] && echo "mk-jb.sh: TrollStore.app unpacked into Applications"
+
+TSTMP=$(mktemp -d)
+(cd "$TSTMP" && ar x "$OUT/debs/$TS_HELPER")
+tar -C "$TSTMP" -xf "$TSTMP"/data.tar.* 2>/dev/null || zstd -dc "$TSTMP"/data.tar.zst | tar -C "$TSTMP" -xf -
+if [ -f "$TSTMP/usr/bin/trollstorehelper" ]; then
+	mkdir -p "$OUT/root/var/jb/usr/bin"
+	cp "$TSTMP/usr/bin/trollstorehelper" "$OUT/root/var/jb/usr/bin/trollstorehelper"
+	chmod 4755 "$OUT/root/var/jb/usr/bin/trollstorehelper"
+	echo "mk-jb.sh: trollstorehelper installed with setuid root"
+fi
+rm -rf "$TSTMP"
+
 # ElleKit: the tweak-injection framework (Cydia Substrate's modern replacement). It is what loads a
 # tweak's .dylib into a process and does the function and method hooking; on a rootless jailbreak the
 # jailbreak itself installs it, and it is not in the apt repository, so it is fetched here from its own

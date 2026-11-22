@@ -66,4 +66,12 @@ core    bsd/dev/hakios.socinfo.c
 power   bsd/dev/hakios.thermal.c
 power   bsd/dev/hakios.pmic.c
 power   bsd/dev/hakios.battguard.c
+power   bsd/dev/hakios.charger.c
 bluetooth bsd/dev/hakios.bt.c
+bluetooth bsd/dev/hakios.exynos_bt.c
+wifi    bsd/dev/hakios.exynos_wifi.c
+camera  bsd/dev/hakios.exynos_camera.c
+audio   bsd/dev/hakios.exynos_sound.c
+core    bsd/dev/hakios.sc8830_serial.c
+core    bsd/dev/hakios.sc8830_timer.c
+gpu     bsd/dev/hakios.sc8830_fb.c

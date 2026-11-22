@@ -24,3 +24,7 @@ driver PMIC
 driver BATTGUARD
 	file    bsd/dev/hakios.battguard.c
 	help    the run handed back to the loader before the battery is flat (battery_stop=<percent>)
+
+driver CHARGER
+	file    bsd/dev/hakios.charger.c
+	help    active battery charging management and hardware watchdog keeper (charger=1)

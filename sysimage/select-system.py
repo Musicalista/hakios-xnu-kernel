@@ -98,17 +98,26 @@ KEEP_LANG = ('en', 'Base', 'English', 'en_US', 'en_GB')
 
 def entries(listing):
     """Yield one dict per entry of a 7z technical listing."""
+    with open(listing, 'rb') as f:
+        bom = f.read(2)
+    enc = 'utf-16' if bom in (b'\xff\xfe', b'\xfe\xff') else 'utf-8'
     entry = {}
-    for line in open(listing, errors='replace'):
-        line = line.rstrip('\n')
+    for line in open(listing, encoding=enc, errors='replace'):
+        line = line.rstrip('\r\n')
         if not line:
             if 'Path' in entry and 'Mode' in entry:
+                entry['Path'] = entry['Path'].replace('\\', '/')
+                if 'Symbolic Link' in entry:
+                    entry['Symbolic Link'] = entry['Symbolic Link'].replace('\\', '/')
                 yield entry
             entry = {}
         elif ' = ' in line or line.endswith(' ='):
             key, _, value = line.partition(' =')
             entry[key] = value[1:] if value.startswith(' ') else value
     if 'Path' in entry and 'Mode' in entry:
+        entry['Path'] = entry['Path'].replace('\\', '/')
+        if 'Symbolic Link' in entry:
+            entry['Symbolic Link'] = entry['Symbolic Link'].replace('\\', '/')
         yield entry
 
 

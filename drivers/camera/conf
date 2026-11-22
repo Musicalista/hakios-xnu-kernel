@@ -7,6 +7,10 @@ driver CAMERA
 	help    the cameras (cam=N): the sensors on the CCI bus and the ISP's interface. The sensors, their tables
 	help    (fw-camera/) and the pins are the POCO X5 Pro's
 
+driver EXYNOS_CAMERA
+	file    bsd/dev/hakios.exynos_camera.c
+	help    Samsung Galaxy A56 5G camera subsystem (Exynos 1580 CSIS0 + ISOCELL S5KGNJ 50MP sensor)
+
 driver TORCH
 	file    bsd/dev/hakios.torch.c
 	help    the flashlight: the flash LED module of the PM8350C (torch=1); it stays off while the battery is too warm

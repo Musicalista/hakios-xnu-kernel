@@ -60,3 +60,4 @@ hakios is an experimental project focused on bringing darwin to android hardware
 @oodze - founder, @netusd - advertising / ceo-dev, @wannqn - dev, @hxfuxyyXD - dev, Rhaenja Hun（杭润嘉） - developer / sponsor
 
 tym sicilium for the sources!
+"# hackios-j105m" 

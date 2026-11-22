@@ -808,6 +808,7 @@ class Container:
         struct.pack_into('<IIII', sm, 32, BS, bpc, self.chunks_per_cib, self.cibs_per_cab)
         struct.pack_into('<QQIIQIIQ', sm, 48, bc, self.chunks, self.cibs, self.cabs, free_total,
                          self.cib_addr_off, 0, 0)
+        struct.pack_into('<I', sm, 128, BS)
         struct.pack_into('<IIQIIQQQQ', sm, 144, 0, IP_BM_TX_MULTIPLIER, self.ip_blocks, self.ip_bm_size,
                          self.ip_bmap_blocks, self.ip_bm_base, self.ip_base, 0, 0)
         struct.pack_into('<QQQHHIQ', sm, 200, 0, self.ipfq_oid, 0, ip_fq_node_limit(self.chunks), 0, 0, 0)

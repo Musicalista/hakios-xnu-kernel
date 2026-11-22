@@ -19,3 +19,11 @@ driver SOCINFO
 	file    bsd/dev/hakios.socinfo.c
 	help    the chip's identity from the firmware's shared memory: kern.hakios.soc_* (socinfo=1). Any Qualcomm SoC
 	help    that keeps SMEM item 137; where the shared memory is comes from soc_smem=
+
+driver SC8830_SERIAL
+	file    bsd/dev/hakios.sc8830_serial.c
+	help    Spreadtrum SC8830/SharkL UART early serial console
+
+driver SC8830_TIMER
+	file    bsd/dev/hakios.sc8830_timer.c
+	help    Spreadtrum SC8830/ARM Cortex-A7 architecture timer

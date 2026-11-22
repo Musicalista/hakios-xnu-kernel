@@ -30,3 +30,7 @@ driver MIC
 driver VIRTIO_SOUND
 	file    bsd/dev/hakios.virtio_sound.c
 	help    QEMU's virtio sound device as the player of /dev/hakios-audio (virtio_sound=1). QEMU only
+
+driver EXYNOS_SOUND
+	file    bsd/dev/hakios.exynos_sound.c
+	help    Samsung Galaxy A56 5G audio driver (Exynos 1580 ABOX subsystem at 0x14E50000)
